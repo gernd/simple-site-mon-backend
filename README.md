@@ -1,2 +1,2 @@
 # simple-site-mon
-A simple monitoring application
+A simple monitoring application for webresources
