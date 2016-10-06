@@ -1,4 +1,4 @@
-package de.gernd.simplemon;
+package de.gernd.simplemon.endpoints;
 
 import org.springframework.stereotype.Component;
 
