@@ -16,3 +16,6 @@ hs_err_pid*
 
 # idea files
 .idea
+
+# backend build files
+backend/build
