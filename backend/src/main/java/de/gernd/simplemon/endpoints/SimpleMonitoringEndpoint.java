@@ -9,7 +9,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.util.LinkedList;
 import java.util.List;
 
 @Component
@@ -20,13 +19,16 @@ public class SimpleMonitoringEndpoint {
     @Autowired
     private SimpleMonitoringService monitoringService;
 
+    /**
+     * Method for retrieving all currently monitored sites
+     *
+     * @return All currently monitored sites
+     */
     @Path("/")
     @GET
     public Response monitor() {
         GetMonitoredSitesResponse response = new GetMonitoredSitesResponse();
-        List<String> monitoredSites = new LinkedList<>();
-        monitoredSites.add("Site 1");
-        monitoredSites.add("Site 2");
+        List<String> monitoredSites = monitoringService.getMonitoredSites();
         response.setMonitoredSites(monitoredSites);
         return Response.ok(monitoredSites).build();
     }
