@@ -3,7 +3,6 @@ package de.gernd.simplemon.service;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.Produces;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class SimpleMonitoringService {
         monitoredSites.add(url);
     }
 
-    public List<String> getMonitoredSites(){
+    public List<String> getMonitoredSites() {
         return monitoredSites;
     }
 }
