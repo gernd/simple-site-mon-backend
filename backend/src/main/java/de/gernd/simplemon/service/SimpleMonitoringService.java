@@ -3,6 +3,8 @@ package de.gernd.simplemon.service;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.Produces;
+
 /**
  * Implements the simple website monitoring functionality
  */
@@ -13,9 +15,10 @@ public class SimpleMonitoringService {
 
     /**
      * Start monitoring a website
+     *
      * @param url URL of the website to monitor
      */
-    public void startMonitoring(String url){
+    public void startMonitoring(String url) {
         log.info("Request to start monitoring " + url);
     }
 }
