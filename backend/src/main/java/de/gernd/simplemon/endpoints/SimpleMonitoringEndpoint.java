@@ -27,7 +27,7 @@ public class SimpleMonitoringEndpoint {
      */
     @Path("/")
     @GET
-    public Response monitor() {
+    public Response getMonitoredSites() {
         GetMonitoredSitesResponse response = new GetMonitoredSitesResponse();
         List<String> monitoredSites = monitoringService.getMonitoredSites();
         response.monitoredSites = monitoredSites;
@@ -43,4 +43,6 @@ public class SimpleMonitoringEndpoint {
         monitoringService.startMonitoring(addSiteToMonitorRequest.url);
         return Response.ok().build();
     }
+
+
 }
