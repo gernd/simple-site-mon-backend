@@ -18,7 +18,7 @@ public class ScheduledMonitoringJob implements Runnable {
     /**
      * Encapsulates the HTTP request and monitoring for a given URL
      */
-    private static class MonitorTask implements Callable<String> {
+    private static class MonitorTask implements Callable<MonitoringResult> {
 
         private final String url;
 
@@ -27,15 +27,15 @@ public class ScheduledMonitoringJob implements Runnable {
         }
 
         @Override
-        public String call() throws Exception {
+        public MonitoringResult call() throws Exception {
             System.out.println("Request start for URL " + url);
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             System.out.println("Request done for URL " + url);
             if (response.getStatusCode().equals(HttpStatus.OK)) {
-                return "200 OK for URL " + url;
+                return new MonitoringResult(true);
             } else {
-                return "Did not work for URL " + url;
+                return new MonitoringResult(false);
             }
         }
     }
@@ -54,22 +54,24 @@ public class ScheduledMonitoringJob implements Runnable {
         System.out.println("Monitoring service running");
 
         List<String> urlsToMonitor = monitoringData.getMonitoredUrls();
-        List<Future<String>> results = new LinkedList<Future<String>>();
+        List<Future<MonitoringResult>> results = new LinkedList<Future<MonitoringResult>>();
 
         for (String urlToMonitor : urlsToMonitor) {
-            Future<String> monitoringResult = executorService.submit(new MonitorTask(urlToMonitor));
+            Future<MonitoringResult> monitoringResult = executorService.submit(new MonitorTask(urlToMonitor));
             results.add(monitoringResult);
         }
 
-
-        // collect results
-        for (Future<String> monitoringResult : results) {
+        // collect results and map exception to error results
+        List<MonitoringResult> mappedResults = new LinkedList<>();
+        for (Future<MonitoringResult> monitoringResult : results) {
             try {
-                System.out.println("Result of monitoring: " + monitoringResult.get());
+                MonitoringResult result = monitoringResult.get();
+                System.out.println("Result of monitoring: " + result);
+                mappedResults.add(result);
             } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+                System.out.println("Execution exception " + e.getMessage());
+                mappedResults.add(new MonitoringResult(false));
             }
         }
-
     }
 }
