@@ -21,7 +21,18 @@ public class SimpleMonitoringService {
 
     private final Logger log = Logger.getLogger(SimpleMonitoringService.class);
     private final List<String> monitoredSites = new LinkedList<>();
-    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+
+    /**
+     * number of threads available for monitoring tasks
+     */
+    private final int NUMBER_OF_THREADS = 3;
+
+    /**
+     * number of second between each monitoring
+     */
+    private final int MONITORING_INTERVAL_SECONDS = 5;
+
+    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(NUMBER_OF_THREADS);
 
     /**
      * Start monitoring a website
@@ -31,18 +42,18 @@ public class SimpleMonitoringService {
     public synchronized void startMonitoring(String url) {
         log.info("Request to start monitoring " + url);
         monitoredSites.add(url);
-        final Runnable monitoringTask = () ->  {
+        final Runnable monitoringTask = () -> {
             System.out.println("Monitoring " + url);
             // TODO add Rest Template
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
-            if(response.getStatusCode().equals(HttpStatus.OK)){
+            if (response.getStatusCode().equals(HttpStatus.OK)) {
                 System.out.println("Received 200");
             } else {
                 System.out.println("Received status code " + response.getStatusCode().getReasonPhrase());
             }
         };
-        executorService.scheduleAtFixedRate(monitoringTask, 5, 5, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(monitoringTask, MONITORING_INTERVAL_SECONDS, MONITORING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
     public List<String> getMonitoredSites() {
