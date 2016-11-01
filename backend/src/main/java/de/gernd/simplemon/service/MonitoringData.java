@@ -1,9 +1,6 @@
 package de.gernd.simplemon.service;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Synchronizes access to monitored URLs and monitor results
@@ -23,7 +20,7 @@ public class MonitoringData {
     public synchronized List<String> getMonitoredUrls() {
         List<String> clonedList = new LinkedList<>();
         for (String url : monitoredUrls) {
-            clonedList.add(url);
+            clonedList.add(new String(url));
         }
 
         return clonedList;
@@ -42,5 +39,18 @@ public class MonitoringData {
             }
             urlToMonitoringResults.get(result.getUrl()).add(result);
         });
+    }
+
+    /**
+     * @return A shallow copy of all immutable monitoring results, It is safe to iterate or change the list that is returned by this method.
+     */
+    public synchronized List<MonitoringResult> getMonitoringResults(final String url){
+        if(!urlToMonitoringResults.containsKey(url)){
+            return Collections.EMPTY_LIST;
+        }
+
+        List<MonitoringResult> clonedResults = new LinkedList<>();
+        urlToMonitoringResults.get(url).forEach(monResult -> clonedResults.add(monResult));
+        return clonedResults;
     }
 }

@@ -48,4 +48,8 @@ public class SimpleMonitoringService {
     public List<String> getMonitoredSites() {
         return monitoringData.getMonitoredUrls();
     }
+
+    public List<MonitoringResult> getMonitoringResults(final String url){
+        return monitoringData.getMonitoringResults(url);
+    }
 }

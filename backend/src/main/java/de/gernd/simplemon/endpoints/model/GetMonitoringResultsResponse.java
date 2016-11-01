@@ -1,7 +1,10 @@
 package de.gernd.simplemon.endpoints.model;
 
-/**
- * Created by gernot on 01.11.16.
- */
+import de.gernd.simplemon.service.MonitoringData;
+import de.gernd.simplemon.service.MonitoringResult;
+
+import java.util.List;
+
 public class GetMonitoringResultsResponse {
+    public List<MonitoringResult> monitoringResults;
 }
