@@ -2,6 +2,7 @@ package de.gernd.simplemon.endpoints;
 
 import de.gernd.simplemon.endpoints.model.AddSiteToMonitorRequest;
 import de.gernd.simplemon.endpoints.model.GetMonitoredSitesResponse;
+import de.gernd.simplemon.service.MonitoredUrl;
 import de.gernd.simplemon.service.MonitoringResult;
 import de.gernd.simplemon.service.SimpleMonitoringService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class SimpleMonitoringEndpoint {
     @GET
     public Response getMonitoredSites() {
         GetMonitoredSitesResponse response = new GetMonitoredSitesResponse();
-        List<String> monitoredSites = monitoringService.getMonitoredSites();
+        List<MonitoredUrl> monitoredSites = monitoringService.getMonitoredSites();
         response.monitoredSites = monitoredSites;
         return Response.ok(monitoredSites).build();
     }

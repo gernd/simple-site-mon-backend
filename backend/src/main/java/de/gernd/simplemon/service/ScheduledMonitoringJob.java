@@ -50,11 +50,11 @@ public class ScheduledMonitoringJob implements Runnable {
 
     @Override
     public void run() {
-        List<String> urlsToMonitor = monitoringData.getMonitoredUrls();
+        List<MonitoredUrl> urlsToMonitor = monitoringData.getMonitoredUrls();
         List<Future<MonitoringResult>> results = new LinkedList<Future<MonitoringResult>>();
 
-        for (String urlToMonitor : urlsToMonitor) {
-            Future<MonitoringResult> monitoringResult = executorService.submit(new MonitorTask(urlToMonitor));
+        for (MonitoredUrl urlToMonitor : urlsToMonitor) {
+            Future<MonitoringResult> monitoringResult = executorService.submit(new MonitorTask(urlToMonitor.getUrl()));
             results.add(monitoringResult);
         }
 

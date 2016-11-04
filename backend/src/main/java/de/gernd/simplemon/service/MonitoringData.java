@@ -10,20 +10,21 @@ import java.util.*;
 @Slf4j
 public class MonitoringData {
 
-    private final List<String> monitoredUrls = new LinkedList<>();
+    private final List<MonitoredUrl> monitoredUrls = new LinkedList<>();
     private final Map<String, List<MonitoringResult>> urlToMonitoringResults = new HashMap<>();
+    private static int monitoredUrlIdCounter = 1;
 
     public synchronized void addUrl(final String url) {
-        monitoredUrls.add(url);
+        monitoredUrls.add(MonitoredUrl.builder().id(monitoredUrlIdCounter++).url(url).build());
     }
 
     /**
-     * @return A deep copy of all monitored Urls, It is safe to iterate or change the list that is returned by this method.
+     * @return A shallow copy containing immutable MonitoredUrl instances. It is safe to iterate or change the list that is returned by this method.
      */
-    public synchronized List<String> getMonitoredUrls() {
-        List<String> clonedList = new LinkedList<>();
-        for (String url : monitoredUrls) {
-            clonedList.add(new String(url));
+    public synchronized List<MonitoredUrl> getMonitoredUrls() {
+        List<MonitoredUrl> clonedList = new LinkedList<>();
+        for (MonitoredUrl monitoredUrl : monitoredUrls) {
+            clonedList.add(MonitoredUrl.builder().url(monitoredUrl.getUrl()).id(monitoredUrl.getId()).build());
         }
 
         return clonedList;

@@ -45,7 +45,7 @@ public class SimpleMonitoringService {
         monitoringData.addUrl(url);
     }
 
-    public List<String> getMonitoredSites() {
+    public List<MonitoredUrl> getMonitoredSites() {
         return monitoringData.getMonitoredUrls();
     }
 
