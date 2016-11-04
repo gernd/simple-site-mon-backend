@@ -33,9 +33,9 @@ public class ScheduledMonitoringJob implements Runnable {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             System.out.println("Request done for URL " + url);
             if (response.getStatusCode().equals(HttpStatus.OK)) {
-                return new MonitoringResult(true, url);
+                return MonitoringResult.builder().isUp(true).url(url).build();
             } else {
-                return new MonitoringResult(false, url);
+                return MonitoringResult.builder().isUp(false).url("").build();
             }
         }
     }
@@ -70,7 +70,8 @@ public class ScheduledMonitoringJob implements Runnable {
                 mappedResults.add(result);
             } catch (InterruptedException | ExecutionException e) {
                 System.out.println("Execution exception " + e.getMessage());
-                mappedResults.add(new MonitoringResult(false, "unknown"));
+                final MonitoringResult mappedResult = MonitoringResult.builder().isUp(false).url("").build();
+                mappedResults.add(mappedResult);
             }
         }
 

@@ -79,5 +79,6 @@
     <orderEntry type="library" name="Gradle: org.glassfish.hk2:class-model:2.5.0-b05" level="project" />
     <orderEntry type="library" name="Gradle: com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.8.3" level="project" />
     <orderEntry type="library" name="Gradle: org.glassfish.hk2.external:asm-all-repackaged:2.5.0-b05" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.projectlombok:lombok:1.16.10" level="project" />
   </component>
 </module>
