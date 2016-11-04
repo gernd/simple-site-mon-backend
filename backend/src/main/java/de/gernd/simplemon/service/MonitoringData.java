@@ -51,7 +51,6 @@ public class MonitoringData {
         if (!urlToMonitoringResults.containsKey(url)) {
             return Collections.EMPTY_LIST;
         }
-
         List<MonitoringResult> clonedResults = new LinkedList<>();
         urlToMonitoringResults.get(url).forEach(monResult -> clonedResults.add(monResult));
         return clonedResults;

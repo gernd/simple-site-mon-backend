@@ -1,5 +1,6 @@
 package de.gernd.simplemon.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,8 @@ import java.util.concurrent.*;
 /**
  * Attempts to reach all given urls and collects the results
  */
+@Slf4j
 public class ScheduledMonitoringJob implements Runnable {
-
 
     /**
      * Encapsulates the HTTP request and monitoring for a given URL
@@ -28,14 +29,13 @@ public class ScheduledMonitoringJob implements Runnable {
 
         @Override
         public MonitoringResult call() throws Exception {
-            System.out.println("Request start for URL " + url);
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
-            System.out.println("Request done for URL " + url);
             if (response.getStatusCode().equals(HttpStatus.OK)) {
                 return MonitoringResult.builder().isUp(true).url(url).build();
             } else {
-                return MonitoringResult.builder().isUp(false).url("").build();
+                log.info("Request for url {} returned status code {}", url, response.getStatusCode());
+                return MonitoringResult.builder().isUp(false).url(url).build();
             }
         }
     }
@@ -46,13 +46,10 @@ public class ScheduledMonitoringJob implements Runnable {
 
     public ScheduledMonitoringJob(MonitoringData monitoringData) {
         this.monitoringData = monitoringData;
-        System.out.println("Monitoring Task instantiated");
     }
 
     @Override
     public void run() {
-        System.out.println("Monitoring service running");
-
         List<String> urlsToMonitor = monitoringData.getMonitoredUrls();
         List<Future<MonitoringResult>> results = new LinkedList<Future<MonitoringResult>>();
 
@@ -66,10 +63,9 @@ public class ScheduledMonitoringJob implements Runnable {
         for (Future<MonitoringResult> monitoringResult : results) {
             try {
                 MonitoringResult result = monitoringResult.get();
-                System.out.println("Result of monitoring: " + result);
                 mappedResults.add(result);
             } catch (InterruptedException | ExecutionException e) {
-                System.out.println("Execution exception " + e.getMessage());
+                log.error("Error during monitoring execution: {}", e.getMessage());
                 final MonitoringResult mappedResult = MonitoringResult.builder().isUp(false).url("").build();
                 mappedResults.add(mappedResult);
             }
