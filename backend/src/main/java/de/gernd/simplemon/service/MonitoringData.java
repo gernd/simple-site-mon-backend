@@ -11,7 +11,7 @@ import java.util.*;
 public class MonitoringData {
 
     private final List<MonitoredUrl> monitoredUrls = new LinkedList<>();
-    private final Map<String, List<MonitoringResult>> urlToMonitoringResults = new HashMap<>();
+    private final Map<Integer, List<MonitoringResult>> monitoredUrlIdsToResults = new HashMap<>();
     private static int monitoredUrlIdCounter = 1;
 
     public synchronized void addUrl(final String url) {
@@ -38,22 +38,23 @@ public class MonitoringData {
     public synchronized void updateMonitoringResults(List<MonitoringResult> results) {
         results.forEach(result -> {
             log.info("Adding monitoring result: {}", result);
-            if (!urlToMonitoringResults.containsKey(result.getUrl())) {
-                urlToMonitoringResults.put(result.getUrl(), new LinkedList<>());
+            if (!monitoredUrlIdsToResults.containsKey(result.getUrlToMonitor().getId())) {
+                monitoredUrlIdsToResults.put(result.getUrlToMonitor().getId(), new LinkedList<>());
             }
-            urlToMonitoringResults.get(result.getUrl()).add(result);
+            monitoredUrlIdsToResults.get(result.getUrlToMonitor().getId()).add(result);
         });
     }
 
     /**
+     * @param id identifier of the URL for which the monitoring results should be fetched
      * @return A shallow copy of all immutable monitoring results, It is safe to iterate or change the list that is returned by this method.
      */
-    public synchronized List<MonitoringResult> getMonitoringResults(final String url) {
-        if (!urlToMonitoringResults.containsKey(url)) {
+    public synchronized List<MonitoringResult> getMonitoringResults(final int id) {
+        if (!monitoredUrlIdsToResults.containsKey(id)) {
             return Collections.EMPTY_LIST;
         }
         List<MonitoringResult> clonedResults = new LinkedList<>();
-        urlToMonitoringResults.get(url).forEach(monResult -> clonedResults.add(monResult));
+        monitoredUrlIdsToResults.get(id).forEach(monResult -> clonedResults.add(monResult));
         return clonedResults;
     }
 }

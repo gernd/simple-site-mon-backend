@@ -21,21 +21,21 @@ public class ScheduledMonitoringJob implements Runnable {
      */
     private static class MonitorTask implements Callable<MonitoringResult> {
 
-        private final String url;
+        private final MonitoredUrl urlToMonitor;
 
-        public MonitorTask(final String url) {
-            this.url = url;
+        public MonitorTask(final MonitoredUrl urlToMonitor) {
+            this.urlToMonitor = urlToMonitor;
         }
 
         @Override
         public MonitoringResult call() throws Exception {
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(urlToMonitor.getUrl(), HttpMethod.GET, null, String.class);
             if (response.getStatusCode().equals(HttpStatus.OK)) {
-                return MonitoringResult.builder().isUp(true).url(url).build();
+                return MonitoringResult.builder().isUp(true).urlToMonitor(urlToMonitor).build();
             } else {
-                log.info("Request for url {} returned status code {}", url, response.getStatusCode());
-                return MonitoringResult.builder().isUp(false).url(url).build();
+                log.info("Request for url {} returned status code {}", urlToMonitor.getUrl(), response.getStatusCode());
+                return MonitoringResult.builder().isUp(false).urlToMonitor(urlToMonitor).build();
             }
         }
     }
@@ -54,7 +54,7 @@ public class ScheduledMonitoringJob implements Runnable {
         List<Future<MonitoringResult>> results = new LinkedList<Future<MonitoringResult>>();
 
         for (MonitoredUrl urlToMonitor : urlsToMonitor) {
-            Future<MonitoringResult> monitoringResult = executorService.submit(new MonitorTask(urlToMonitor.getUrl()));
+            Future<MonitoringResult> monitoringResult = executorService.submit(new MonitorTask(urlToMonitor));
             results.add(monitoringResult);
         }
 
@@ -66,8 +66,7 @@ public class ScheduledMonitoringJob implements Runnable {
                 mappedResults.add(result);
             } catch (InterruptedException | ExecutionException e) {
                 log.error("Error during monitoring execution: {}", e.getMessage());
-                final MonitoringResult mappedResult = MonitoringResult.builder().isUp(false).url("").build();
-                mappedResults.add(mappedResult);
+                // TODO add mapped result with url and id from failed request
             }
         }
 

@@ -7,5 +7,5 @@ import lombok.*;
 @ToString
 public class MonitoringResult {
     private boolean isUp;
-    private String url;
+    private MonitoredUrl urlToMonitor;
 }

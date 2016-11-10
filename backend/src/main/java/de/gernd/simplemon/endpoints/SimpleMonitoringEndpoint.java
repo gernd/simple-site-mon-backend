@@ -5,6 +5,7 @@ import de.gernd.simplemon.endpoints.model.GetMonitoredSitesResponse;
 import de.gernd.simplemon.service.MonitoredUrl;
 import de.gernd.simplemon.service.MonitoringResult;
 import de.gernd.simplemon.service.SimpleMonitoringService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @Path("/")
 @Produces("application/json")
 @Consumes("application/json")
+@Slf4j
 public class SimpleMonitoringEndpoint {
 
     @Autowired
@@ -42,6 +44,7 @@ public class SimpleMonitoringEndpoint {
     @Path("/monitored-sites")
     @POST
     public Response addSite(AddSiteToMonitorRequest addSiteToMonitorRequest){
+        log.info("Request to add site {} for monitoring", addSiteToMonitorRequest.url);
         monitoringService.startMonitoring(addSiteToMonitorRequest.url);
         return Response.ok().build();
     }
@@ -49,16 +52,15 @@ public class SimpleMonitoringEndpoint {
     /**
      * Method for retrieving monitor results for a certain URL
      *
-     * @param url The URL to fetch the results for
+     * @param id The URL identifier to fetch monitoring results for
      * @return The monitoring results for the given url
      */
-    @Path("/results")
+    @Path("/monitor_results/{id}")
     @GET
-    public Response getMonitorResults() {
-        // hardcoded ATM
-        final String url = "http://www.google.de";
+    public Response getMonitorResults(@PathParam("id") final int id) {
+        log.info("Request for monitoring results for {}", id);
         GetMonitoredSitesResponse response = new GetMonitoredSitesResponse();
-        List<MonitoringResult> monitoringResults = monitoringService.getMonitoringResults(url);
+        List<MonitoringResult> monitoringResults = monitoringService.getMonitoringResults(id);
         return Response.ok(monitoringResults).build();
     }
 

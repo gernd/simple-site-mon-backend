@@ -49,7 +49,7 @@ public class SimpleMonitoringService {
         return monitoringData.getMonitoredUrls();
     }
 
-    public List<MonitoringResult> getMonitoringResults(final String url){
-        return monitoringData.getMonitoringResults(url);
+    public List<MonitoringResult> getMonitoringResults(final int id){
+        return monitoringData.getMonitoringResults(id);
     }
 }
