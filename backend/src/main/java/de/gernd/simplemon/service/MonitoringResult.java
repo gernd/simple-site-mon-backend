@@ -8,4 +8,5 @@ import lombok.*;
 public class MonitoringResult {
     private boolean isUp;
     private MonitoredUrl urlToMonitor;
+    private long timeNeededForRequest;
 }

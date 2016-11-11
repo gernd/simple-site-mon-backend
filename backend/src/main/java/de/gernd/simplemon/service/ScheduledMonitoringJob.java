@@ -1,11 +1,18 @@
 package de.gernd.simplemon.service;
 
+import jersey.repackaged.com.google.common.base.Stopwatch;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -22,17 +29,32 @@ public class ScheduledMonitoringJob implements Runnable {
     private static class MonitorTask implements Callable<MonitoringResult> {
 
         private final MonitoredUrl urlToMonitor;
+        private final RestTemplate restTemplate;
+        private long timeNeededForRequestMs;
 
         public MonitorTask(final MonitoredUrl urlToMonitor) {
             this.urlToMonitor = urlToMonitor;
+            // set up Rest template capable of benchmarking HTTP requests
+            restTemplate = new RestTemplate();
+            List<ClientHttpRequestInterceptor> requestInterceptors = new ArrayList<>();
+            requestInterceptors.add(new ClientHttpRequestInterceptor() {
+                @Override
+                public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+                    Stopwatch stopwatch = Stopwatch.createStarted();
+                    ClientHttpResponse response = execution.execute(request, body);
+                    stopwatch.stop();
+                    timeNeededForRequestMs = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+                    return response;
+                }
+            });
+            restTemplate.setInterceptors(requestInterceptors);
         }
 
         @Override
         public MonitoringResult call() throws Exception {
-            RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.exchange(urlToMonitor.getUrl(), HttpMethod.GET, null, String.class);
             if (response.getStatusCode().equals(HttpStatus.OK)) {
-                return MonitoringResult.builder().isUp(true).urlToMonitor(urlToMonitor).build();
+                return MonitoringResult.builder().isUp(true).urlToMonitor(urlToMonitor).timeNeededForRequest(timeNeededForRequestMs).build();
             } else {
                 log.info("Request for url {} returned status code {}", urlToMonitor.getUrl(), response.getStatusCode());
                 return MonitoringResult.builder().isUp(false).urlToMonitor(urlToMonitor).build();
