@@ -1,6 +1,9 @@
 package de.gernd.simplemon.service;
 
+import de.gernd.simplemon.config.MonitoringConfig;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * Implements the simple website monitoring functionality
  */
 @Component
-public class SimpleMonitoringService {
+public class SimpleMonitoringService implements InitializingBean {
 
     private final Logger log = Logger.getLogger(SimpleMonitoringService.class);
 
@@ -23,17 +26,10 @@ public class SimpleMonitoringService {
      */
     private final int NUMBER_OF_THREADS = 1;
 
-    /**
-     * number of second between each monitoring
-     */
-    private final int MONITORING_INTERVAL_SECONDS = 5;
+    @Autowired
+    private MonitoringConfig monitoringConfig;
 
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(NUMBER_OF_THREADS);
-
-    public SimpleMonitoringService() {
-        // start monitoring
-        executorService.scheduleAtFixedRate(new ScheduledMonitoringJob(monitoringData), MONITORING_INTERVAL_SECONDS, MONITORING_INTERVAL_SECONDS, TimeUnit.SECONDS);
-    }
 
     /**
      * Start monitoring a website
@@ -49,7 +45,15 @@ public class SimpleMonitoringService {
         return monitoringData.getMonitoredUrls();
     }
 
-    public List<MonitoringResult> getMonitoringResults(final int id){
+    public List<MonitoringResult> getMonitoringResults(final int id) {
         return monitoringData.getMonitoringResults(id);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("properties have been set, monitoringConfig is " + monitoringConfig);
+        executorService.scheduleAtFixedRate(new ScheduledMonitoringJob(monitoringData),
+                monitoringConfig.getInterval(),
+                monitoringConfig.getInterval(), TimeUnit.SECONDS);
     }
 }

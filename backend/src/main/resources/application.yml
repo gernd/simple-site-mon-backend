@@ -1,2 +1,5 @@
 server:
     port: 8081
+
+monitoring_config:
+  interval: 3
