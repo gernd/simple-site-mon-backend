@@ -19,3 +19,6 @@ hs_err_pid*
 
 # backend build files
 backend/build
+
+# python client generated html files
+client/python/*.html
