@@ -51,7 +51,6 @@ public class SimpleMonitoringService implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        System.out.println("properties have been set, monitoringConfig is " + monitoringConfig);
         executorService.scheduleAtFixedRate(new ScheduledMonitoringJob(monitoringData),
                 monitoringConfig.getInterval(),
                 monitoringConfig.getInterval(), TimeUnit.SECONDS);
