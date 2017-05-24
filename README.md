@@ -1,7 +1,8 @@
 # simple-site-mon
 A simple monitoring application for webresources
 
-A simple site monitoring tool consisting of a backend offering a HTTP interface and at the moment one simple client.
+A simple site monitoring tool consisting of a Spring Boot backend providing a REST interface and some clients.
 
-## Technologies
-The backend is implemented using Spring Boot. The only client(s) at this stage are some shell scripts.
+## Technologies used
+The backend is implemented using Spring Boot. 
+Clients: Bash and Python scripts as well as a hacky Browser App using jQuery. :-)
