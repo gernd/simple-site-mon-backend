@@ -29,8 +29,10 @@ dependencies {
     // tag::actuator[]
     compile("org.springframework.boot:spring-boot-starter-actuator")
     // end::actuator[]
-    // unit tests
-    testCompile("junit:junit")
     // lombok for boilerplate code generation
-    compileOnly "org.projectlombok:lombok:1.16.10"
+    compile "org.projectlombok:lombok:1.16.10"
+
+    // test dependencies
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile 'io.rest-assured:rest-assured:3.0.3'
 }

@@ -1,4 +1,4 @@
-package de.gernd.simplemon.endpoints.model;
+package de.gernd.simplemon.endpoints.dto;
 
 import de.gernd.simplemon.service.MonitoredUrl;
 

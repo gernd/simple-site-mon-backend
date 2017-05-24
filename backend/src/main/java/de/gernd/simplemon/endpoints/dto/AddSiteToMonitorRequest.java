@@ -1,4 +1,4 @@
-package de.gernd.simplemon.endpoints.model;
+package de.gernd.simplemon.endpoints.dto;
 
 /**
  * DTO used for adding a site to monitor

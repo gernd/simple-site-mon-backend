@@ -1,7 +1,7 @@
 package de.gernd.simplemon.endpoints;
 
-import de.gernd.simplemon.endpoints.model.AddSiteToMonitorRequest;
-import de.gernd.simplemon.endpoints.model.GetMonitoredSitesResponse;
+import de.gernd.simplemon.endpoints.dto.AddSiteToMonitorRequest;
+import de.gernd.simplemon.endpoints.dto.GetMonitoredSitesResponse;
 import de.gernd.simplemon.service.MonitoredUrl;
 import de.gernd.simplemon.service.MonitoringResult;
 import de.gernd.simplemon.service.SimpleMonitoringService;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.net.URI;
 import java.util.List;
 
 @Component
@@ -43,10 +44,10 @@ public class SimpleMonitoringEndpoint {
      */
     @Path("/monitored-sites")
     @POST
-    public Response addSite(AddSiteToMonitorRequest addSiteToMonitorRequest){
+    public Response addSite(AddSiteToMonitorRequest addSiteToMonitorRequest) {
         log.info("Request to add site {} for monitoring", addSiteToMonitorRequest.url);
         monitoringService.startMonitoring(addSiteToMonitorRequest.url);
-        return Response.ok().build();
+        return Response.created(URI.create("DummyURI")).build();
     }
 
     /**
