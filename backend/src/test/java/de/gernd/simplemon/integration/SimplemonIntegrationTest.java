@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -35,6 +36,6 @@ public class SimplemonIntegrationTest {
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .and()
-                .body("url", hasItem("http://www.google.de"));
+                .body("monitoredSites.url", hasItem("http://www.google.de"));
     }
 }

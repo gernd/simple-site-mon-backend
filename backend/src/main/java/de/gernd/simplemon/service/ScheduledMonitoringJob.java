@@ -1,6 +1,5 @@
 package de.gernd.simplemon.service;
 
-import jersey.repackaged.com.google.common.base.Stopwatch;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
@@ -40,10 +39,9 @@ public class ScheduledMonitoringJob implements Runnable {
             requestInterceptors.add(new ClientHttpRequestInterceptor() {
                 @Override
                 public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-                    Stopwatch stopwatch = Stopwatch.createStarted();
                     ClientHttpResponse response = execution.execute(request, body);
-                    stopwatch.stop();
-                    timeNeededForRequestMs = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+                    // TODO (GPO) reactivate stopwatch
+                    timeNeededForRequestMs = 0;
                     return response;
                 }
             });

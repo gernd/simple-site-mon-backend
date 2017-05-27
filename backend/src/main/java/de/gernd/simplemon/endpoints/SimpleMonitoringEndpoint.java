@@ -7,47 +7,44 @@ import de.gernd.simplemon.service.MonitoringResult;
 import de.gernd.simplemon.service.SimpleMonitoringService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
+import javax.websocket.server.PathParam;
 import java.net.URI;
 import java.util.List;
 
-@Component
-@Path("/")
-@Produces("application/json")
-@Consumes("application/json")
+@RestController
 @Slf4j
 public class SimpleMonitoringEndpoint {
 
     @Autowired
     private SimpleMonitoringService monitoringService;
 
-
     /**
      * Method for retrieving all currently monitored sites
      *
      * @return All currently monitored sites
      */
-    @Path("/monitored-sites")
-    @GET
-    public Response getMonitoredSites() {
+    @GetMapping(path = "/monitored-sites")
+    public ResponseEntity<GetMonitoredSitesResponse> getMonitoredSites() {
         GetMonitoredSitesResponse response = new GetMonitoredSitesResponse();
         List<MonitoredUrl> monitoredSites = monitoringService.getMonitoredSites();
         response.monitoredSites = monitoredSites;
-        return Response.ok(monitoredSites).build();
+        return ResponseEntity.ok(response);
     }
 
     /**
      * Method for retrieving all currently monitored sites
      */
-    @Path("/monitored-sites")
-    @POST
-    public Response addSite(AddSiteToMonitorRequest addSiteToMonitorRequest) {
+    @PostMapping(path = "/monitored-sites")
+    public ResponseEntity addSite(@RequestBody AddSiteToMonitorRequest addSiteToMonitorRequest) {
         log.info("Request to add site {} for monitoring", addSiteToMonitorRequest.url);
         monitoringService.startMonitoring(addSiteToMonitorRequest.url);
-        return Response.created(URI.create("DummyURI")).build();
+        return ResponseEntity.created(URI.create("DummyURI")).build();
     }
 
     /**
@@ -56,13 +53,11 @@ public class SimpleMonitoringEndpoint {
      * @param id The URL identifier to fetch monitoring results for
      * @return The monitoring results for the given url
      */
-    @Path("/monitor_results/{id}")
-    @GET
-    public Response getMonitorResults(@PathParam("id") final int id) {
+    @GetMapping(path = "/monitor_results/{id}")
+    public ResponseEntity<GetMonitoredSitesResponse> getMonitorResults(@PathParam("id") final int id) {
         log.info("Request for monitoring results for {}", id);
         GetMonitoredSitesResponse response = new GetMonitoredSitesResponse();
         List<MonitoringResult> monitoringResults = monitoringService.getMonitoringResults(id);
-        return Response.ok(monitoringResults).build();
+        return ResponseEntity.ok(response);
     }
-
 }
