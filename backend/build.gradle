@@ -26,9 +26,15 @@ targetCompatibility = 1.8
 
 dependencies {
     compile ("org.springframework.boot:spring-boot-starter-web")
+
+    // db
+    compile ("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile ("com.h2database:h2")
+
     // tag::actuator[]
     compile("org.springframework.boot:spring-boot-starter-actuator")
     // end::actuator[]
+
     // lombok for boilerplate code generation
     compile "org.projectlombok:lombok:1.16.10"
 
