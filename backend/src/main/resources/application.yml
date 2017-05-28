@@ -3,3 +3,6 @@ server:
 
 monitoring_config:
   interval: 3
+
+# enable h2 debugging console
+spring.h2.console.enabled: true
