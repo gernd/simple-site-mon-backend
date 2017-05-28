@@ -1,6 +1,7 @@
 package de.gernd.simplemon.service;
 
 import de.gernd.simplemon.config.MonitoringConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,8 @@ import java.util.concurrent.TimeUnit;
  * Implements the simple website monitoring functionality
  */
 @Component
+@Slf4j
 public class SimpleMonitoringService implements InitializingBean {
-
-    private final Logger log = Logger.getLogger(SimpleMonitoringService.class);
 
     private final MonitoringData monitoringData = new MonitoringData();
 
