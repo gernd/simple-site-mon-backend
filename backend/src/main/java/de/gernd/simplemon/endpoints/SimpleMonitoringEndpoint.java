@@ -2,6 +2,7 @@ package de.gernd.simplemon.endpoints;
 
 import de.gernd.simplemon.endpoints.dto.AddSiteToMonitorRequest;
 import de.gernd.simplemon.endpoints.dto.GetMonitoredSitesResponse;
+import de.gernd.simplemon.endpoints.dto.GetMonitoringResultsResponse;
 import de.gernd.simplemon.service.MonitoredUrl;
 import de.gernd.simplemon.service.MonitoringResult;
 import de.gernd.simplemon.service.SimpleMonitoringService;
@@ -31,9 +32,9 @@ public class SimpleMonitoringEndpoint {
      */
     @GetMapping(path = "/monitored-sites")
     public ResponseEntity<GetMonitoredSitesResponse> getMonitoredSites() {
-        GetMonitoredSitesResponse response = new GetMonitoredSitesResponse();
         List<MonitoredUrl> monitoredSites = monitoringService.getMonitoredSites();
-        response.monitoredSites = monitoredSites;
+        GetMonitoredSitesResponse response =
+                GetMonitoredSitesResponse.builder().monitoredSites(monitoredSites).build();
         return ResponseEntity.ok(response);
     }
 
@@ -54,9 +55,9 @@ public class SimpleMonitoringEndpoint {
      * @return The monitoring results for the given url
      */
     @GetMapping(path = "/monitor_results/{id}")
-    public ResponseEntity<GetMonitoredSitesResponse> getMonitorResults(@PathParam("id") final int id) {
+    public ResponseEntity<GetMonitoringResultsResponse> getMonitorResults(@PathParam("id") final int id) {
         log.info("Request for monitoring results for {}", id);
-        GetMonitoredSitesResponse response = new GetMonitoredSitesResponse();
+        GetMonitoringResultsResponse response = new GetMonitoringResultsResponse();
         List<MonitoringResult> monitoringResults = monitoringService.getMonitoringResults(id);
         return ResponseEntity.ok(response);
     }
