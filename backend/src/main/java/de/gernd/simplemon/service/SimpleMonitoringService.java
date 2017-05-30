@@ -6,6 +6,7 @@ import de.gernd.simplemon.model.MonitoredEntityRepository;
 import de.gernd.simplemon.model.entities.MonitoredResourceEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 @Component
 @Slf4j
-public class SimpleMonitoringService{
+public class SimpleMonitoringService {
 
     @Autowired
     private MonitoringConfig monitoringConfig;
@@ -33,11 +34,11 @@ public class SimpleMonitoringService{
     public synchronized void startMonitoring(String url) {
         log.info("Request to start monitoring " + url);
         monitoredEntityRepository.save(MonitoredResourceEntity.builder().url(url).build());
-
     }
 
     /**
      * Returns all monitored resources
+     *
      * @return all monitored resources
      */
     public List<MonitoredUrl> getMonitoredSites() {
@@ -45,5 +46,17 @@ public class SimpleMonitoringService{
         List<MonitoredUrl> dtos = Collections.synchronizedList(new ArrayList<>());
         entities.forEach(e -> dtos.add(MonitoredUrl.builder().url(e.getUrl()).id(e.getId()).build()));
         return dtos;
+    }
+
+    /**
+     * Monitors all registered resources
+     */
+    @Scheduled(fixedDelay = 3000)
+    private void monitor() {
+        Iterable<MonitoredResourceEntity> monitoredResourceEntities = monitoredEntityRepository.findAll();
+        monitoredResourceEntities.forEach(
+                e -> {
+                    log.info("Monitoring " + e);
+                });
     }
 }
