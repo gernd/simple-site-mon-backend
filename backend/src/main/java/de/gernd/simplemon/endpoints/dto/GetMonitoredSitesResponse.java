@@ -1,6 +1,5 @@
 package de.gernd.simplemon.endpoints.dto;
 
-import de.gernd.simplemon.service.MonitoredUrl;
 import lombok.Builder;
 import lombok.Data;
 

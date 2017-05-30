@@ -2,7 +2,7 @@ package de.gernd.simplemon.endpoints;
 
 import de.gernd.simplemon.endpoints.dto.AddSiteToMonitorRequest;
 import de.gernd.simplemon.endpoints.dto.GetMonitoredSitesResponse;
-import de.gernd.simplemon.service.MonitoredUrl;
+import de.gernd.simplemon.endpoints.dto.MonitoredUrl;
 import de.gernd.simplemon.service.SimpleMonitoringService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

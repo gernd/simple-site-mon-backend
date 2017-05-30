@@ -1,4 +1,4 @@
-package de.gernd.simplemon.service;
+package de.gernd.simplemon.endpoints.dto;
 
 import lombok.Builder;
 import lombok.Getter;

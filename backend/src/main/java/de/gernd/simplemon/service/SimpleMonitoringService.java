@@ -1,20 +1,16 @@
 package de.gernd.simplemon.service;
 
 import de.gernd.simplemon.config.MonitoringConfig;
+import de.gernd.simplemon.endpoints.dto.MonitoredUrl;
 import de.gernd.simplemon.model.MonitoredEntityRepository;
 import de.gernd.simplemon.model.entities.MonitoredResourceEntity;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Implements the simple website monitoring functionality

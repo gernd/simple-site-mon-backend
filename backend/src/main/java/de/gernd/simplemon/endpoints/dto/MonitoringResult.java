@@ -1,5 +1,6 @@
-package de.gernd.simplemon.service;
+package de.gernd.simplemon.endpoints.dto;
 
+import de.gernd.simplemon.endpoints.dto.MonitoredUrl;
 import lombok.*;
 
 @Builder
