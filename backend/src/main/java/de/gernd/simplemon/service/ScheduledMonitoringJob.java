@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -60,24 +59,13 @@ public class ScheduledMonitoringJob implements Runnable {
         }
     }
 
-    final MonitoringData monitoringData;
     final ExecutorService executorService = Executors.newCachedThreadPool();
 
 
-    public ScheduledMonitoringJob(MonitoringData monitoringData) {
-        this.monitoringData = monitoringData;
-    }
-
     @Override
     public void run() {
-        List<MonitoredUrl> urlsToMonitor = monitoringData.getMonitoredUrls();
-        List<Future<MonitoringResult>> results = new LinkedList<Future<MonitoringResult>>();
 
-        for (MonitoredUrl urlToMonitor : urlsToMonitor) {
-            Future<MonitoringResult> monitoringResult = executorService.submit(new MonitorTask(urlToMonitor));
-            results.add(monitoringResult);
-        }
-
+        /*
         // collect results and map exception to error results
         List<MonitoringResult> mappedResults = new LinkedList<>();
         for (Future<MonitoringResult> monitoringResult : results) {
@@ -89,7 +77,7 @@ public class ScheduledMonitoringJob implements Runnable {
                 // TODO add mapped result with url and id from failed request
             }
         }
+        */
 
-        monitoringData.updateMonitoringResults(mappedResults);
     }
 }

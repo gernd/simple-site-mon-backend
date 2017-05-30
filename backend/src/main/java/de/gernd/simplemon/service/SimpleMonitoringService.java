@@ -1,12 +1,16 @@
 package de.gernd.simplemon.service;
 
 import de.gernd.simplemon.config.MonitoringConfig;
+import de.gernd.simplemon.model.MonitoredEntityRepository;
+import de.gernd.simplemon.model.entities.MonitoredResourceEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,42 +21,33 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @Slf4j
-public class SimpleMonitoringService implements InitializingBean {
-
-    private final MonitoringData monitoringData = new MonitoringData();
-
-    /**
-     * number of threads available for the monitoring task
-     */
-    private final int NUMBER_OF_THREADS = 1;
+public class SimpleMonitoringService{
 
     @Autowired
     private MonitoringConfig monitoringConfig;
 
-    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(NUMBER_OF_THREADS);
+    @Autowired
+    private MonitoredEntityRepository monitoredEntityRepository;
 
     /**
-     * Start monitoring a website
+     * Start monitoring a web resource
      *
      * @param url URL of the website to monitor
      */
     public synchronized void startMonitoring(String url) {
         log.info("Request to start monitoring " + url);
-        monitoringData.addUrl(url);
+        monitoredEntityRepository.save(MonitoredResourceEntity.builder().url(url).build());
+
     }
 
+    /**
+     * Returns all monitored resources
+     * @return all monitored resources
+     */
     public List<MonitoredUrl> getMonitoredSites() {
-        return monitoringData.getMonitoredUrls();
-    }
-
-    public List<MonitoringResult> getMonitoringResults(final int id) {
-        return monitoringData.getMonitoringResults(id);
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        executorService.scheduleAtFixedRate(new ScheduledMonitoringJob(monitoringData),
-                monitoringConfig.getInterval(),
-                monitoringConfig.getInterval(), TimeUnit.SECONDS);
+        Iterable<MonitoredResourceEntity> entities = monitoredEntityRepository.findAll();
+        List<MonitoredUrl> dtos = Collections.synchronizedList(new ArrayList<>());
+        entities.forEach(e -> dtos.add(MonitoredUrl.builder().url(e.getUrl()).id(e.getId()).build()));
+        return dtos;
     }
 }

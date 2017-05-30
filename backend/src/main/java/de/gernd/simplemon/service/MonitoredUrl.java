@@ -10,5 +10,5 @@ import lombok.ToString;
 public class MonitoredUrl {
 
     private String url;
-    private int id;
+    private long id;
 }
