@@ -1,34 +1,20 @@
-var refreshMessages = function(){
-    console.log("Refreshing messages");
-    $.get("http://localhost:8080/messages",function(response){
-    var messagesHtml = "";
-    for(messageObject of response){
-        messagesHtml += messageObject.message + '<br>';
-    }
-        $('#messages').html(messagesHtml);
-    });
-};
-
 $(document).ready(function(){
     console.log("Ready");
-    /*
-    refreshMessages();
 
-    $("#sendMessageButton").click(function(){
-        var message = $("#messageInput").val()
-        console.log("Sending message " + message);
+    $("#addUrlButton").click(function(){
+        var url = $("#urlInput").val()
+        console.log("Adding URL for monitoring " + url);
 
         $.ajax({
-          url:"http://localhost:8080/messages",
+          url:"http://localhost:8081/monitored-sites",
           type:"POST",
-          data:JSON.stringify({'message' : message}),
+          data:JSON.stringify({'url' : url}),
           contentType:"application/json; charset=utf-8",
           dataType:"json",
           complete: function(){
-              refreshMessages();
+            console.log("Added");
           }
         });
 
     });
-    */
 })
