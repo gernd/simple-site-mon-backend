@@ -31,7 +31,7 @@ public class SimpleMonitoringService {
      *
      * @param url URL of the website to monitor
      */
-    public synchronized void startMonitoring(String url) {
+    public void startMonitoring(String url) {
         log.info("Request to start monitoring " + url);
         monitoredEntityRepository.save(MonitoredResourceEntity.builder().url(url).build());
     }
