@@ -4,6 +4,7 @@ import de.gernd.simplemon.config.MonitoringConfig;
 import de.gernd.simplemon.endpoints.dto.MonitoredUrl;
 import de.gernd.simplemon.model.MonitoredEntityRepository;
 import de.gernd.simplemon.model.entities.MonitoredResourceEntity;
+import de.gernd.simplemon.model.entities.MonitoringResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -57,6 +58,9 @@ public class SimpleMonitoringService {
         monitoredResourceEntities.forEach(
                 e -> {
                     log.info("Monitoring " + e);
+                    MonitoringResult monitoringResult = MonitoringResult.builder().wasUp(true).build();
+                    e.addMonitoringResult(monitoringResult);
+                    monitoredEntityRepository.save(e);
                 });
     }
 }

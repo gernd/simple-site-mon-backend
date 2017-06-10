@@ -1,23 +1,32 @@
 package de.gernd.simplemon.model.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class MonitoredResourceEntity {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private long id;
 
     private String url;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "monitoredResourceEntity")
+    private List<MonitoringResult> monitoringResults;
+
+    public void addMonitoringResult(MonitoringResult monitoringResult) {
+        monitoringResult.setMonitoredResourceEntity(this);
+        monitoringResults.add(monitoringResult);
+    }
+
+    @Override
+    public String toString(){
+        return "Monitored Resource Entity with URL " + url + " and id " + id;
+    }
 }
