@@ -37,7 +37,8 @@ public class SimpleMonitoringEndpoint {
     }
 
     /**
-     * Method for retrieving all currently monitored sites
+     * Method for adding a new web resource to be monitored
+     * @param addSiteToMonitorRequest Request containing the web resource to be monitored
      */
     @PostMapping(path = "/monitored-sites")
     public ResponseEntity addSite(@RequestBody AddSiteToMonitorRequest addSiteToMonitorRequest) {
