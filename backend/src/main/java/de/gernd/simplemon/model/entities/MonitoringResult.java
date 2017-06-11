@@ -18,7 +18,7 @@ public class MonitoringResult {
     @GeneratedValue
     private long id;
 
-    private boolean wasUp;
+    private long responseTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "monitoredResourceEntity_Id")

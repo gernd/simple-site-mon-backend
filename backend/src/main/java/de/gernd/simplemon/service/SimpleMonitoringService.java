@@ -7,8 +7,11 @@ import de.gernd.simplemon.model.entities.MonitoredResourceEntity;
 import de.gernd.simplemon.model.entities.MonitoringResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +29,8 @@ public class SimpleMonitoringService {
 
     @Autowired
     private MonitoredEntityRepository monitoredEntityRepository;
+
+    final RestTemplate restTemplate = new RestTemplate();
 
     /**
      * Start monitoring a web resource
@@ -58,7 +63,11 @@ public class SimpleMonitoringService {
         monitoredResourceEntities.forEach(
                 e -> {
                     log.info("Monitoring " + e);
-                    MonitoringResult monitoringResult = MonitoringResult.builder().wasUp(true).build();
+                    StopWatch stopWatch = new StopWatch();
+                    stopWatch.start();
+                    restTemplate.exchange(e.getUrl(), HttpMethod.GET, null, String.class);
+                    stopWatch.stop();
+                    MonitoringResult monitoringResult = MonitoringResult.builder().responseTime(stopWatch.getTotalTimeMillis()).build();
                     e.addMonitoringResult(monitoringResult);
                     monitoredEntityRepository.save(e);
                 });
