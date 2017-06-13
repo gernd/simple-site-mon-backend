@@ -55,6 +55,22 @@ public class SimpleMonitoringService {
     }
 
     /**
+     * Fetches monitoring results for the monitored entity
+     *
+     * @param monitoredUrlId id of the monitored resource to get the monitoring results
+     * @return MonitoringResults for the monitored entity
+     */
+    public List<MonitoringResult> getMonitoringResults(long monitoredUrlId) {
+        MonitoredResourceEntity monitoredResource = monitoredEntityRepository.findOne(monitoredUrlId);
+        if (monitoredResource == null) {
+            return Collections.emptyList();
+        } else {
+            return monitoredResource.getMonitoringResults();
+        }
+
+    }
+
+    /**
      * Monitors all registered resources
      */
     @Scheduled(fixedDelay = 3000)

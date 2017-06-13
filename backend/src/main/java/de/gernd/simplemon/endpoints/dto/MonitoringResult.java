@@ -1,13 +1,11 @@
 package de.gernd.simplemon.endpoints.dto;
 
-import de.gernd.simplemon.endpoints.dto.MonitoredUrl;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 @Builder
-@Getter
-@ToString
+@Data
 public class MonitoringResult {
     private boolean isUp;
-    private MonitoredUrl urlToMonitor;
     private long timeNeededForRequest;
 }

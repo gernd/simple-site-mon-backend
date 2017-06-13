@@ -1,17 +1,19 @@
 package de.gernd.simplemon.endpoints;
 
 import de.gernd.simplemon.endpoints.dto.AddSiteToMonitorRequest;
+import de.gernd.simplemon.endpoints.dto.GetMonitoredSiteResponse;
 import de.gernd.simplemon.endpoints.dto.GetMonitoredSitesResponse;
 import de.gernd.simplemon.endpoints.dto.MonitoredUrl;
+import de.gernd.simplemon.model.entities.MonitoringResult;
 import de.gernd.simplemon.service.SimpleMonitoringService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -38,6 +40,7 @@ public class SimpleMonitoringEndpoint {
 
     /**
      * Method for adding a new web resource to be monitored
+     *
      * @param addSiteToMonitorRequest Request containing the web resource to be monitored
      */
     @PostMapping(path = "/monitored-sites")
@@ -48,15 +51,20 @@ public class SimpleMonitoringEndpoint {
     }
 
     /**
-     * Method for retrieving monitor results for a certain URL
+     * Method for retrieving monitor results for a monitored URL
      *
      * @param id The URL identifier to fetch monitoring results for
      * @return The monitoring results for the given url
      */
-    @GetMapping(path = "/monitor_results/{id}")
-    @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
-    public void getMonitorResults(@PathParam("id") final int id) {
+    @GetMapping(path = "/monitored-sites/{id}")
+    public ResponseEntity<GetMonitoredSiteResponse> getMonitoredSiteDetails(@PathVariable("id") final Long id) {
         log.info("Request for monitoring results for {}", id);
-        return;
+        List<de.gernd.simplemon.endpoints.dto.MonitoringResult> resultDtos = Collections.synchronizedList(new ArrayList<>());
+        List<MonitoringResult> resultEntities = monitoringService.getMonitoringResults(id);
+        resultEntities.forEach(monitoringResult -> resultDtos.add(
+                de.gernd.simplemon.endpoints.dto.MonitoringResult.builder().
+                        timeNeededForRequest(monitoringResult.getResponseTime()).build()));
+        GetMonitoredSiteResponse response = GetMonitoredSiteResponse.builder().id(id).monitoringResults(resultDtos).build();
+        return ResponseEntity.ok(response);
     }
 }
