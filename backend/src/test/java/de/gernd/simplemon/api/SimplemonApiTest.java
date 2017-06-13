@@ -13,7 +13,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class SimplemonIntegrationTest {
+public class SimplemonApiTest {
 
     @Test
     public void test_addUrlToMonitor_urlIsInMonitoredUrls() {
