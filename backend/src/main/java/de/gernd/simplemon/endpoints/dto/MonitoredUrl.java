@@ -1,12 +1,10 @@
 package de.gernd.simplemon.endpoints.dto;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
 
 @Builder
-@Getter
-@ToString
+@Data
 public class MonitoredUrl {
 
     private String url;

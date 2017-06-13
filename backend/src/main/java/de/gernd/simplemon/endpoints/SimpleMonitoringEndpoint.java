@@ -45,8 +45,8 @@ public class SimpleMonitoringEndpoint {
      */
     @PostMapping(path = "/monitored-sites")
     public ResponseEntity addSite(@RequestBody AddSiteToMonitorRequest addSiteToMonitorRequest) {
-        log.info("Request to add resource {} for monitoring", addSiteToMonitorRequest.url);
-        monitoringService.startMonitoring(addSiteToMonitorRequest.url);
+        log.info("Request to add resource {} for monitoring", addSiteToMonitorRequest.getUrl());
+        monitoringService.startMonitoring(addSiteToMonitorRequest.getUrl());
         return ResponseEntity.created(URI.create("DummyURI")).build();
     }
 
