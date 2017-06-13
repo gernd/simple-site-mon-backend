@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -46,8 +47,12 @@ public class SimpleMonitoringEndpoint {
     @PostMapping(path = "/monitored-sites")
     public ResponseEntity addSite(@RequestBody AddSiteToMonitorRequest addSiteToMonitorRequest) {
         log.info("Request to add resource {} for monitoring", addSiteToMonitorRequest.getUrl());
-        monitoringService.startMonitoring(addSiteToMonitorRequest.getUrl());
-        return ResponseEntity.created(URI.create("DummyURI")).build();
+        long monitoredResourceId = monitoringService.startMonitoring(addSiteToMonitorRequest.getUrl());
+
+        // build URL for created resource
+        ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequestUri();
+        return ResponseEntity.created(URI.create(
+                builder.path("/" + String.valueOf(monitoredResourceId)).toUriString())).build();
     }
 
     /**
