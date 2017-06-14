@@ -36,12 +36,12 @@ public class SimpleMonitoringService {
      * Start monitoring a web resource
      *
      * @param url URL of the website to monitor
-     * @return the id of the monitored resource
+     * @return the generated resource
      */
-    public long startMonitoring(String url) {
+    public MonitoredResourceEntity startMonitoring(String url) {
         log.info("Request to start monitoring " + url);
         MonitoredResourceEntity createdEntity = monitoredEntityRepository.save(MonitoredResourceEntity.builder().url(url).build());
-        return createdEntity.getId();
+        return createdEntity;
     }
 
     /**

@@ -1,9 +1,7 @@
 package de.gernd.simplemon.endpoints;
 
-import de.gernd.simplemon.endpoints.dto.AddSiteToMonitorRequest;
-import de.gernd.simplemon.endpoints.dto.GetMonitoredSiteResponse;
-import de.gernd.simplemon.endpoints.dto.GetMonitoredSitesResponse;
-import de.gernd.simplemon.endpoints.dto.MonitoredUrl;
+import de.gernd.simplemon.endpoints.dto.*;
+import de.gernd.simplemon.model.entities.MonitoredResourceEntity;
 import de.gernd.simplemon.model.entities.MonitoringResult;
 import de.gernd.simplemon.service.SimpleMonitoringService;
 import lombok.extern.slf4j.Slf4j;
@@ -45,14 +43,19 @@ public class SimpleMonitoringEndpoint {
      * @param addSiteToMonitorRequest Request containing the web resource to be monitored
      */
     @PostMapping(path = "/monitored-sites")
-    public ResponseEntity addSite(@RequestBody AddSiteToMonitorRequest addSiteToMonitorRequest) {
+    public ResponseEntity<AddSiteToMonitorResponse> addSite(@RequestBody AddSiteToMonitorRequest addSiteToMonitorRequest) {
         log.info("Request to add resource {} for monitoring", addSiteToMonitorRequest.getUrl());
-        long monitoredResourceId = monitoringService.startMonitoring(addSiteToMonitorRequest.getUrl());
+        MonitoredResourceEntity createdResource = monitoringService.startMonitoring(addSiteToMonitorRequest.getUrl());
 
-        // build URL for created resource
+        AddSiteToMonitorResponse responseBody = AddSiteToMonitorResponse.builder()
+                .id(createdResource.getId())
+                .url(createdResource.getUrl())
+                .build();
+
+        // build URL for created resource in location header
         ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequestUri();
         return ResponseEntity.created(URI.create(
-                builder.path("/" + String.valueOf(monitoredResourceId)).toUriString())).build();
+                builder.path("/" + String.valueOf(createdResource.getId())).toUriString())).body(responseBody);
     }
 
     /**
