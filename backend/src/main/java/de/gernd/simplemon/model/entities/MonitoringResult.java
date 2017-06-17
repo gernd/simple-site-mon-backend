@@ -18,6 +18,8 @@ public class MonitoringResult {
     @GeneratedValue
     private long id;
 
+    private long timestamp;
+
     private long responseTime;
 
     @ManyToOne(fetch = FetchType.LAZY)

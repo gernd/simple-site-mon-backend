@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
@@ -54,7 +55,14 @@ public class SimplemonApiTest {
                 .statusCode(HttpStatus.OK.value())
                 .extract()
                 .response();
-        List<String> monitoringResults = getMonitoredSiteResponse.path("monitoringResults");
+        List<Map<String,Integer>> monitoringResults = getMonitoredSiteResponse.path("monitoringResults");
         assertTrue("No monitoring results available", monitoringResults.size() > 0);
+
+        // verify that timeNeededForRequest and timestamp are available
+        Map<String, Integer> firstMonitoringResult = monitoringResults.get(0);
+        int timeNeededForRequest = firstMonitoringResult.get("timeNeededForRequest");
+        assertTrue("timeNeededForRequest does not exist or is negative", timeNeededForRequest > 0);
+        int timestamp = firstMonitoringResult.get("timestamp");
+        assertTrue("timestamp does not exist or is negative", timestamp > 0);
     }
 }

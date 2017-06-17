@@ -7,4 +7,5 @@ import lombok.Data;
 @Data
 public class MonitoringResult {
     private long timeNeededForRequest;
+    private long timestamp;
 }

@@ -70,8 +70,9 @@ public class SimpleMonitoringEndpoint {
         List<de.gernd.simplemon.endpoints.dto.MonitoringResult> resultDtos = Collections.synchronizedList(new ArrayList<>());
         List<MonitoringResult> resultEntities = monitoringService.getMonitoringResults(id);
         resultEntities.forEach(monitoringResult -> resultDtos.add(
-                de.gernd.simplemon.endpoints.dto.MonitoringResult.builder().
-                        timeNeededForRequest(monitoringResult.getResponseTime()).build()));
+                de.gernd.simplemon.endpoints.dto.MonitoringResult.builder()
+                        .timeNeededForRequest(monitoringResult.getResponseTime())
+                        .timestamp(monitoringResult.getTimestamp()).build()));
         GetMonitoredSiteResponse response = GetMonitoredSiteResponse.builder().id(id).monitoringResults(resultDtos).build();
         return ResponseEntity.ok(response);
     }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -81,11 +82,13 @@ public class SimpleMonitoringService {
         monitoredResourceEntities.forEach(
                 e -> {
                     log.info("Monitoring " + e);
+                    final long timestamp = Instant.now().getEpochSecond();
                     StopWatch stopWatch = new StopWatch();
                     stopWatch.start();
                     restTemplate.exchange(e.getUrl(), HttpMethod.GET, null, String.class);
                     stopWatch.stop();
-                    MonitoringResult monitoringResult = MonitoringResult.builder().responseTime(stopWatch.getTotalTimeMillis()).build();
+                    MonitoringResult monitoringResult =
+                            MonitoringResult.builder().responseTime(stopWatch.getTotalTimeMillis()).timestamp(timestamp).build();
                     e.addMonitoringResult(monitoringResult);
                     monitoredEntityRepository.save(e);
                 });
