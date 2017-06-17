@@ -89,6 +89,7 @@ public class SimpleMonitoringService {
                     stopWatch.stop();
                     MonitoringResult monitoringResult =
                             MonitoringResult.builder().responseTime(stopWatch.getTotalTimeMillis()).timestamp(timestamp).build();
+                    log.debug("Monitoring result for Url {} is {}", e.getUrl(), monitoringResult);
                     e.addMonitoringResult(monitoringResult);
                     monitoredEntityRepository.save(e);
                 });
