@@ -1,20 +1,42 @@
-var updatedMonitoredResources = function(){
-    console.log("Updating monitored resources");
+var monitoredResourcesIds = [];
+
+var initializeMonitoredResources = function(){
+    console.log("Initializing monitored resources");
     $.get("http://localhost:8081/monitored-sites",function(response){
         console.log(response);
-        var html = "";
         for(monitoredResource of response.monitoredSites){
-            html += monitoredResource.url + '<br>';
+            // create dom node for displaying monitored resource data
+            var domNodeForResource =
+                $("<div id='monitoredResource_" + monitoredResource.id + "'>" +
+                "<h4>" + monitoredResource.url + "</h4>" +
+                "<did id='monitoredResource_" + monitoredResource.id + "_data'>data</div>" +
+                "</div>");
+            $("#monitoredResources").append(domNodeForResource);
+            monitoredResourcesIds.push(monitoredResource.id);
         }
-        console.log(html);
-        $('#monitoredResources').html(html);
     });
+}
+
+var updatedMonitoredResources = function(){
+    console.log("Updating resources");
+    for(monitoredResourceId of monitoredResourcesIds){
+        console.log(monitoredResourceId);
+        $.get("http://localhost:8081/monitored-sites/" + monitoredResourceId,
+        function(response){
+            console.log(response);
+            $("#monitoredResource_" + response.id + "_data").html(JSON.stringify(response.monitoringResults));
+        });
+    }
 };
 
 $(document).ready(function(){
-    console.log("Ready");
-    updatedMonitoredResources();
 
+    // initialize functionality for updating the monitored resource
+    setInterval(updatedMonitoredResources, 3000);
+
+    initializeMonitoredResources();
+
+    // register click listener
     $("#addUrlButton").click(function(){
         var url = $("#urlInput").val()
         console.log("Adding URL for monitoring " + url);
@@ -25,9 +47,10 @@ $(document).ready(function(){
           data:JSON.stringify({'url' : url}),
           contentType:"application/json; charset=utf-8",
           dataType:"json",
-          complete: function(){
+          complete: function(data){
             console.log("Added");
-            updatedMonitoredResources();
+            console.log(data);
+            // TODO: add id for monitored resources
           }
         });
     });
