@@ -1,8 +1,9 @@
+var MONITORED_RESOURCES_BASE_URL = "http://localhost:8081/monitored-sites";
 var monitoredResourcesIds = [];
 
 var initializeMonitoredResources = function(){
     console.log("Initializing monitored resources");
-    $.get("http://localhost:8081/monitored-sites",function(response){
+    $.get(MONITORED_RESOURCES_BASE_URL,function(response){
         console.log(response);
         for(monitoredResource of response.monitoredSites){
             // create dom node for displaying monitored resource data
@@ -21,7 +22,7 @@ var updatedMonitoredResources = function(){
     console.log("Updating resources");
     for(monitoredResourceId of monitoredResourcesIds){
         console.log(monitoredResourceId);
-        $.get("http://localhost:8081/monitored-sites/" + monitoredResourceId,
+        $.get(MONITORED_RESOURCES_BASE_URL + "/" + monitoredResourceId,
         function(response){
             console.log(response);
             $("#monitoredResource_" + response.id + "_data").html(JSON.stringify(response.monitoringResults));
@@ -42,7 +43,7 @@ $(document).ready(function(){
         console.log("Adding URL for monitoring " + url);
 
         $.ajax({
-          url:"http://localhost:8081/monitored-sites",
+          url:MONITORED_RESOURCES_BASE_URL,
           type:"POST",
           data:JSON.stringify({'url' : url}),
           contentType:"application/json; charset=utf-8",
