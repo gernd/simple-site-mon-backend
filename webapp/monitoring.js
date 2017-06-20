@@ -1,22 +1,52 @@
 var MONITORED_RESOURCES_BASE_URL = "http://localhost:8081/monitored-sites";
 var monitoredResourcesIds = [];
+var chart;
+
+var initializeChart = function(){
+    chart = Highcharts.chart('monitoredResourcesChart', {
+
+        title: {
+            text: 'Monitored Resources Response Time'
+        },
+
+        subtitle: {
+            text: 'Refresh Interval: 3 seconds'
+        },
+
+        yAxis: {
+            title: {
+                text: 'Response time (ms)'
+            }
+        },
+        xAxis: {
+            title: {
+                text: 'timestamp (seconds)'
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle'
+        }
+    });
+};
 
 var initializeMonitoredResources = function(){
     console.log("Initializing monitored resources");
     $.get(MONITORED_RESOURCES_BASE_URL,function(response){
         console.log(response);
         for(monitoredResource of response.monitoredSites){
-            // create dom node for displaying monitored resource data
-            var domNodeForResource =
-                $("<div id='monitoredResource_" + monitoredResource.id + "'>" +
-                "<h4>" + monitoredResource.url + "</h4>" +
-                "<did id='monitoredResource_" + monitoredResource.id + "_data'>data</div>" +
-                "</div>");
-            $("#monitoredResources").append(domNodeForResource);
-            monitoredResourcesIds.push(monitoredResource.id);
+            console.log(monitoredResource);
+            // add series in chart for resources that are already monitored
+            // TODO: fetch monitored data from backend
+            var chartData = {
+                name : monitoredResource.url,
+                data: [[1,1], [2,2], [3,3]]
+            };
+            chart.addSeries(chartData);
         }
     });
-}
+};
 
 var updatedMonitoredResources = function(){
     console.log("Updating resources");
@@ -25,12 +55,14 @@ var updatedMonitoredResources = function(){
         $.get(MONITORED_RESOURCES_BASE_URL + "/" + monitoredResourceId,
         function(response){
             console.log(response);
-            $("#monitoredResource_" + response.id + "_data").html(JSON.stringify(response.monitoringResults));
+            // $("#monitoredResource_" + response.id + "_data").html(JSON.stringify(response.monitoringResults));
         });
     }
 };
 
 $(document).ready(function(){
+
+    initializeChart();
 
     // initialize functionality for updating the monitored resource
     setInterval(updatedMonitoredResources, 3000);
@@ -51,6 +83,8 @@ $(document).ready(function(){
           complete: function(data){
             console.log("Added");
             console.log(data);
+            var monitoredResourceId = data.responseJSON.id;
+            monitoredResourcesIds.push(monitoredResourceId);
             // TODO: add id for monitored resources
           }
         });
