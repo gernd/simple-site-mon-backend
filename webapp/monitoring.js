@@ -8,11 +8,9 @@ var initializeChart = function(){
         title: {
             text: 'Monitored Resources Response Time'
         },
-
         subtitle: {
             text: 'Refresh Interval: 3 seconds'
         },
-
         yAxis: {
             title: {
                 text: 'Response time (ms)'
@@ -31,26 +29,39 @@ var initializeChart = function(){
     });
 };
 
+var getChartDataFromMonitoringData = function(monitoringDataArr){
+    return monitoringDataArr.map(function(monitoringResult){
+        return [monitoringResult.timestamp, monitoringResult.timeNeededForRequest];
+    });
+};
+
+var initializeChartForResource = function(resource){
+    // fetch monitored data for resource and add series in chart
+    // with existing monitoring data
+    $.get(MONITORED_RESOURCES_BASE_URL + "/" + resource.id,
+    function(response){
+        var chartData = getChartDataFromMonitoringData(response.monitoringResults);
+        var chartSeries = {
+            name : resource.url,
+            data: chartData
+        };
+        chart.addSeries(chartSeries);
+    });
+}
+
 var initializeMonitoredResources = function(){
     console.log("Initializing monitored resources");
     $.get(MONITORED_RESOURCES_BASE_URL,function(response){
-        console.log(response);
-        for(monitoredResource of response.monitoredSites){
+        for(var monitoredResource of response.monitoredSites){
             console.log(monitoredResource);
-            // add series in chart for resources that are already monitored
-            // TODO: fetch monitored data from backend
-            var chartData = {
-                name : monitoredResource.url,
-                data: [[1,1], [2,2], [3,3]]
-            };
-            chart.addSeries(chartData);
+            initializeChartForResource(monitoredResource);
         }
     });
 };
 
 var updatedMonitoredResources = function(){
     console.log("Updating resources");
-    for(monitoredResourceId of monitoredResourcesIds){
+    for(var monitoredResourceId of monitoredResourcesIds){
         console.log(monitoredResourceId);
         $.get(MONITORED_RESOURCES_BASE_URL + "/" + monitoredResourceId,
         function(response){
