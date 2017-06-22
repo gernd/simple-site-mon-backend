@@ -2,7 +2,7 @@ var MONITORED_RESOURCES_BASE_URL = "http://localhost:8081/monitored-sites";
 var monitoredResourcesIds = [];
 var chart;
 
-var initializeChart = function(){
+var initializeChart = function () {
     chart = Highcharts.chart('monitoredResourcesChart', {
 
         title: {
@@ -29,49 +29,58 @@ var initializeChart = function(){
     });
 };
 
-var getChartDataFromMonitoringData = function(monitoringDataArr){
-    return monitoringDataArr.map(function(monitoringResult){
+var getChartDataFromMonitoringData = function (monitoringDataArr) {
+    return monitoringDataArr.map(function (monitoringResult) {
         return [monitoringResult.timestamp, monitoringResult.timeNeededForRequest];
     });
 };
 
-var initializeChartForResource = function(resource){
+var initializeChartForResource = function (resource) {
     // fetch monitored data for resource and add series in chart
     // with existing monitoring data
     $.get(MONITORED_RESOURCES_BASE_URL + "/" + resource.id,
-    function(response){
-        var chartData = getChartDataFromMonitoringData(response.monitoringResults);
-        var chartSeries = {
-            name : resource.url,
-            data: chartData
-        };
-        chart.addSeries(chartSeries);
-    });
+        function (response) {
+            var chartData = getChartDataFromMonitoringData(response.monitoringResults);
+            var chartSeries = {
+                name: resource.url,
+                resourceId: resource.id,
+                data: chartData
+            };
+            chart.addSeries(chartSeries);
+        });
 }
 
-var initializeMonitoredResources = function(){
+var initializeMonitoredResources = function () {
     console.log("Initializing monitored resources");
-    $.get(MONITORED_RESOURCES_BASE_URL,function(response){
-        for(var monitoredResource of response.monitoredSites){
+    $.get(MONITORED_RESOURCES_BASE_URL, function (response) {
+        for (var monitoredResource of response.monitoredSites) {
             console.log(monitoredResource);
             initializeChartForResource(monitoredResource);
+            monitoredResourcesIds.push(monitoredResource.id);
         }
     });
 };
 
-var updatedMonitoredResources = function(){
-    console.log("Updating resources");
-    for(var monitoredResourceId of monitoredResourcesIds){
-        console.log(monitoredResourceId);
-        $.get(MONITORED_RESOURCES_BASE_URL + "/" + monitoredResourceId,
-        function(response){
-            console.log(response);
-            // $("#monitoredResource_" + response.id + "_data").html(JSON.stringify(response.monitoringResults));
+var updateChartForResource = function (monitoredResourceId) {
+    $.get(MONITORED_RESOURCES_BASE_URL + "/" + monitoredResourceId,
+        function (response) {
+            // get corresponding chart object identified by URL of monitored resource
+            var seriesForResources = chart.series.filter(function (e) {
+                return e.options.resourceId === monitoredResourceId;
+            })[0];
+            // add the latest measurement assuming it has already been updated
+            var lastMeasurement = response.monitoringResults[response.monitoringResults.length - 1];
+            seriesForResources.addPoint([lastMeasurement.timestamp, lastMeasurement.timeNeededForRequest]);
         });
+};
+
+var updatedMonitoredResources = function () {
+    for (var monitoredResourceId of monitoredResourcesIds) {
+        updateChartForResource(monitoredResourceId);
     }
 };
 
-$(document).ready(function(){
+$(document).ready(function () {
 
     initializeChart();
 
@@ -81,23 +90,23 @@ $(document).ready(function(){
     initializeMonitoredResources();
 
     // register click listener
-    $("#addUrlButton").click(function(){
+    $("#addUrlButton").click(function () {
         var url = $("#urlInput").val()
         console.log("Adding URL for monitoring " + url);
 
         $.ajax({
-          url:MONITORED_RESOURCES_BASE_URL,
-          type:"POST",
-          data:JSON.stringify({'url' : url}),
-          contentType:"application/json; charset=utf-8",
-          dataType:"json",
-          complete: function(data){
-            console.log("Added");
-            console.log(data);
-            var monitoredResourceId = data.responseJSON.id;
-            monitoredResourcesIds.push(monitoredResourceId);
-            // TODO: add id for monitored resources
-          }
+            url: MONITORED_RESOURCES_BASE_URL,
+            type: "POST",
+            data: JSON.stringify({'url': url}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            complete: function (data) {
+                console.log("Added");
+                console.log(data);
+                var monitoredResourceId = data.responseJSON.id;
+                monitoredResourcesIds.push(monitoredResourceId);
+                // TODO: add id for monitored resources
+            }
         });
     });
 })
