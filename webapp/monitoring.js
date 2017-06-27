@@ -105,7 +105,13 @@ $(document).ready(function () {
                 console.log(data);
                 var monitoredResourceId = data.responseJSON.id;
                 monitoredResourcesIds.push(monitoredResourceId);
-                // TODO: add id for monitored resources
+                // TODO use URL from created resource, as it could have been normalized
+                var chartSeries = {
+                    name: url,
+                    resourceId: monitoredResourceId,
+                    data: []
+                };
+                chart.addSeries(chartSeries);
             }
         });
     });
