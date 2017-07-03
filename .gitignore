@@ -19,7 +19,7 @@ hs_err_pid*
 *.iml
 
 # backend build files
-backend/build
+build
 
 # python client generated html files
 client/python/*.html
