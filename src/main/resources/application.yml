@@ -5,6 +5,6 @@ monitoring_config:
   interval: 3
 
 # enable h2 debugging console
-spring.h2.console.enabled: true
+# spring.h2.console.enabled: true
 
 logging.level.de.gernd.simplemon: DEBUG
